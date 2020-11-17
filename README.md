@@ -20,4 +20,4 @@ The dataset used to train the Generative adversarial networks was the celeba dat
 All the visualizations pertaining to the generation of fake images and the Generator-Discriminator loss curves will be carried out in tensorboard.  
 
 ### Fake Images Generated using DCGAN !
-![Screenshot](DCGAN/Fake_images.png)
+![Screenshot](DCGAN/Fake_images.png) ![Screenshot](DCGAN/loss_curves.png)
