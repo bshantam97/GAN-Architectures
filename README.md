@@ -1,5 +1,7 @@
 # GAN-Architectures
 
+[![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg)](LICENSE.md)
+
 ### Author
 Shantam Bajpai 
 
