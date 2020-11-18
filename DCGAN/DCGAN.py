@@ -43,9 +43,6 @@ class Discriminator(nn.Module):
             nn.LeakyReLU(0.2)
         )
     
-    def forward(self,x):
-        return self.discriminator(x)
-    
 class Generator(nn.Module):
     
     # Here channels_img is nothing but the inputs channels 
@@ -70,9 +67,6 @@ class Generator(nn.Module):
             nn.BatchNorm2d(out_channels),
             nn.ReLU()
         )
-    
-    def forward(self,x):
-        return self.net(x)
 
 def weights_init(m):
     classname = m.__class__.__name__
