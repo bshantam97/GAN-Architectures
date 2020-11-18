@@ -20,53 +20,58 @@ parser.add_argument("-e", "--epochs", required = True, help = "Number of epochs 
 
 args = vars(parser.parse_args())
 
-class Discriminator(nn.Module):
+class Discriminator(nn.Sequential):
     
     def __init__(self, channels_img, features_d):
-        super(Discriminator, self).__init__()
         # Did not use BatchNorm in the last layer of the generator and the first layer of the 
         # discriminator
         # Input: N x channels_img x 64 x 64
-        self.discriminator = nn.Sequential(
-            nn.Conv2d(channels_img, features_d, kernel_size = 4, stride = 2, padding = 1), #32x32
-            nn.LeakyReLU(0.2),
-            self._block(features_d, features_d*2, 4, 2, 1),# 16x16
-            self._block(features_d*2, features_d*4, 4, 2, 1), #8x8
-            self._block(features_d*4, features_d*8, 4, 2, 1), #4x4
-            nn.Conv2d(features_d*8, 1, kernel_size = 4, stride = 2, padding = 0), #1x1(Prediction)
-            nn.Sigmoid()
-        )
+        modules = [nn.Conv2d(channels_img, features_d, kernel_size = 4, stride = 2, padding = 1), #32x32
+                   nn.LeakyReLU(0.2, inplace=True),
+                   self._block(features_d, features_d*2, 4, 2, 1),# 16x16
+                   self._block(features_d*2, features_d*4, 4, 2, 1), #8x8
+                   self._block(features_d*4, features_d*8, 4, 2, 1), #4x4
+                   nn.Conv2d(features_d*8, 1, kernel_size = 4, stride = 2, padding = 0), #1x1(Prediction)
+                   nn.Sigmoid()]
+
+        super(Discriminator, self).__init__(*modules)
+        
     def _block(self, in_channels, out_channels, kernel_size, stride, padding):
         return nn.Sequential(
             nn.Conv2d(in_channels, out_channels,kernel_size, stride, padding, bias=False),
             nn.BatchNorm2d(out_channels),
-            nn.LeakyReLU(0.2)
+            nn.LeakyReLU(0.2, inplace=True)
         )
-    
-class Generator(nn.Module):
+              
+class Generator(nn.Sequential):
     
     # Here channels_img is nothing but the inputs channels 
     # and features_g is nothing but the output channels
     def __init__(self, z_dim, channels_img, features_g):
         
-        super(Generator, self).__init__()
-        
-        self.net = nn.Sequential(
-            # Input: N x z_dim x 1 x 1
-            self._block(z_dim, features_g*16, 4, 1, 0), # N x f_g*16(1024=64*64) x 4 x 4
-            self._block(features_g*16, features_g*8, 4, 2, 1), # f_g*16 x f_g*8 x 8 x 8
-            self._block(features_g*8, features_g*4, 4, 2, 1), # f_g*8 x f_g*4 x 16 x 16
-            self._block(features_g*4, features_g*2, 4, 2, 1), #32 x 32
-            nn.ConvTranspose2d(features_g*2, channels_img, 4, 2, 1),
-            nn.Tanh() #[-1,1]
-        )
+        modules = [self._block(z_dim, features_g*16, 4, 1, 0),
+                   self._block(features_g*16, features_g*8, 4, 2, 1),
+                   self._block(features_g*8, features_g*4, 4, 2, 1),
+                   self._block(features_g*4, features_g*2, 4, 2, 1),
+                   nn.ConvTranspose2d(features_g*2, channels_img, 4, 2, 1),
+                   nn.Tanh()]
+                   
+        super(Generator, self).__init__(*modules)
     
     def _block(self, in_channels, out_channels, kernel_size, stride, padding):
         return nn.Sequential(
             nn.ConvTranspose2d(in_channels, out_channels, kernel_size, stride, padding, bias=False),
             nn.BatchNorm2d(out_channels),
-            nn.ReLU()
+            nn.ReLU(inplace=True)
         )
+    
+def weights_init(m):
+    classname = m.__class__.__name__
+    if classname.find('Conv') != -1:
+        nn.init.normal_(m.weight.data, 0.0, 0.02)
+    elif classname.find('BatchNorm') != -1:
+        nn.init.normal_(m.weight.data, 1.0, 0.02)
+        nn.init.constant_(m.bias.data, 0)
 
 def weights_init(m):
     classname = m.__class__.__name__
@@ -152,6 +157,7 @@ for epoch in range(NUM_EPOCHS):
         real = real.to(device)
         # Pass the latent vector through the generator
         fake = generator(noise)
+
         #####################################################
         # Train the discriminator max log(D(x)) + log(1-D(G(z)))
         #####################################################
