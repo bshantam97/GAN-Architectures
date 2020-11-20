@@ -37,5 +37,5 @@ All the visualizations pertaining to the generation of fake images and the Gener
 ### Fake Images Generated using WGAN for 5 epochs !
 ![Screenshot](Wasserstein_GAN/fake_images_WGAN.PNG)
 
-### Loss Curves for WGAN
+### Loss Curves for WGAN (5 Epochs)
 ![Screenshot](Wasserstein_GAN/loss_curves_WGAN.PNG)
