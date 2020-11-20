@@ -33,3 +33,9 @@ All the visualizations pertaining to the generation of fake images and the Gener
 
 ### Loss curves for DCGAN
 ![Screenshot](DCGAN/loss_curves.PNG)
+
+### Fake Images Generated using WGAN for 5 epochs !
+![Screenshot](Wasserstein_GAN/fake_images_WGAN.png)
+
+### Loss Curves for WGAN
+![Screenshot](Wasserstein_GAN/loss_curves_WGAN.png)
