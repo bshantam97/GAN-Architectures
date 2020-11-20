@@ -14,19 +14,10 @@ Shantam Bajpai
 
 4. CGAN (Conditional Generative adversarial network)
 
-### Research Paper References
-DCGAN: https://arxiv.org/pdf/1511.06434.pdf
-
-WGAN: https://arxiv.org/pdf/1701.07875.pdf
-
-WGAN-GP: https://arxiv.org/pdf/1704.00028v3.pdf
-
 ### Dataset Used
-The dataset used to train the Generative adversarial networks was the celeba dataset which is a large scale face attributes dataset with more than 200K Celebrity faces.
+The dataset used to train the Generative adversarial networks was the celeba dataset which is a large scale face attributes dataset with more than 200K Celebrity faces. 
 
-### Visualizations
-
-All the visualizations pertaining to the generation of fake images and the Generator-Discriminator loss curves will be carried out in tensorboard.  
+## Tensorboard Visualizations
 
 ### Fake Images Generated using DCGAN !
 ![Screenshot](DCGAN/Fake_images.png) 
@@ -39,3 +30,10 @@ All the visualizations pertaining to the generation of fake images and the Gener
 
 ### Loss Curves for WGAN (5 Epochs)
 ![Screenshot](Wasserstein_GAN/loss_curves_WGAN.PNG)
+
+### Research Paper References
+DCGAN: https://arxiv.org/pdf/1511.06434.pdf
+
+WGAN: https://arxiv.org/pdf/1701.07875.pdf
+
+WGAN-GP: https://arxiv.org/pdf/1704.00028v3.pdf
