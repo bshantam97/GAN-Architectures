@@ -14,6 +14,8 @@ Shantam Bajpai
 
 4. CGAN (Conditional Generative adversarial network)
 
+5. EBGAN (Energy Based Generative Adversarial Network)
+
 ### Dataset Used
 The dataset used to train the Generative adversarial networks was the celeba dataset which is a large scale face attributes dataset with more than 200K Celebrity faces. 
 
@@ -37,3 +39,7 @@ DCGAN: https://arxiv.org/pdf/1511.06434.pdf
 WGAN: https://arxiv.org/pdf/1701.07875.pdf
 
 WGAN-GP: https://arxiv.org/pdf/1704.00028v3.pdf
+
+CGAN: https://arxiv.org/pdf/1411.1784.pdf
+
+EBGAN: https://arxiv.org/pdf/1609.03126.pdf
