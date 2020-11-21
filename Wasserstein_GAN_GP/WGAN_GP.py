@@ -67,7 +67,7 @@ class Critic(nn.Sequential):
         
         return nn.Sequential(
          nn.Conv2d(in_channels, out_channels,kernel_size, stride, padding, bias=False),
-            nn.BatchNorm2d(out_channels),
+            nn.InstanceNorm2d(out_channels, affine = True),
             nn.LeakyReLU(0.2, inplace=True)
         )
 
@@ -79,6 +79,29 @@ def weights_init(m):
         nn.init.normal_(m.weight.data, 1, 0.02)
         nn.init.constant_(m.bias.data, 0)
 
+def gradient_penalty(critic, real, fake, device = "cpu"):
+    BATCH_SIZE, C, H, W = real.shape
+    # Creating interpolated images
+    epsilon = torch.randn([BATCH_SIZE, 1, 1, 1]).repeat(1,1,1,1).to(device)
+    interpolated_images = real*epsilon + fake * (1-epsilon)
+
+    #calculate critic scores
+    mixed_scores = critic(interpolated_images)
+
+    # Compute the gradients with respect to the interpolated images, just need the first value
+    gradient = torch.autograd.grad(inputs = interpolated_images, 
+    outputs = mixed_scores, 
+    grad_outputs = torch.ones_like(mixed_scores),
+    create_graph=True,
+    retain_graph=True)[0]
+
+    # Number of Dimension
+    gradient = gradient.view(gradient.shape[0], -1)
+    gradient_norm = gradient.norm(2, dim = 1)
+    gradient_penalty = torch.mean((gradient_norm - 1)**2)
+
+    return gradient_penalty
+
 root = args["dataset"]
 LEARNING_RATE = 0.00005
 BATCH_SIZE = args["batch_size"]
@@ -89,7 +112,7 @@ IMAGE_CHANNELS = args["image_channels"]
 NUM_EPOCHS = args["epochs"]
 IMAGE_SIZE = 64
 CRITIC_ITERATIONS = args["critic_iterations"]
-WEIGHT_CLIP = 0.01
+LAMBDA_GP = 10
 
 dataset = datasets.ImageFolder(root = root , transform=transforms.Compose([
     transforms.Resize(IMAGE_SIZE),
@@ -117,8 +140,8 @@ critic.apply(weights_init)
 ########################
 # Optimizers for Critic and the Generator
 ########################
-optimizer_gen = optim.RMSprop(generator.parameters(), lr = LEARNING_RATE)
-optimizer_critic = optim.RMSprop(critic.parameters(), lr = LEARNING_RATE)
+optimizer_gen = optim.Adam(generator.parameters(), lr = LEARNING_RATE, betas = (0.0, 0.9))
+optimizer_critic = optim.Adam(critic.parameters(), lr = LEARNING_RATE, betas = (0.0, 0.9))
 
 #######################
 # Create tensorboard SummaryWriter objects to display generated fake images and associated loss curves
@@ -155,15 +178,13 @@ for epoch in range(NUM_EPOCHS):
             fake = generator(noise)     
             critic_real = critic(real).view(-1)
             critic_fake = critic(fake.detach()).view(-1)
+            gp = gradient_penalty(critic, real, fake, device=device)
             ## Loss for the critic. Taking -ve because RMSProp are designed to minimize 
             ## Hence to minimize something -ve is equivalent to maximizing that expression
-            loss_critic = -(torch.mean(critic_real) - torch.mean(critic_fake))
-            loss_critic.backward()
+            loss_critic = (-(torch.mean(critic_real) - torch.mean(critic_fake)) + LAMBDA_GP*gp) 
+            loss_critic.backward(retain_graph=True)
             optimizer_critic.step()
-            
-            for p in critic.parameters():
-                p.data.clamp_(-WEIGHT_CLIP, WEIGHT_CLIP)
-        
+
         #############################
         # Train the generator minimizing -E[critic(gen_fake)]
         #############################
