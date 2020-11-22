@@ -21,17 +21,23 @@ The dataset used to train the Generative adversarial networks was the celeba dat
 
 ## Tensorboard Visualizations
 
-### Fake Images Generated using DCGAN !
+### Fake Images Generated using DCGAN 
 ![Screenshot](DCGAN/Fake_images.png) 
 
 ### Loss curves for DCGAN
 ![Screenshot](DCGAN/loss_curves.PNG)
 
-### Fake Images Generated using WGAN for 5 epochs !
+### Fake Images Generated using WGAN for 5 epochs 
 ![Screenshot](Wasserstein_GAN/fake_images_WGAN.PNG)
 
 ### Loss Curves for WGAN (5 Epochs)
 ![Screenshot](Wasserstein_GAN/loss_curves_WGAN.PNG)
+
+### Fake Images generated using WGAN-GP for 5 epochs 
+![Screenshot](Wasserstein_GAN_GP/fake_images.PNG)
+
+### Loss Curves for WGAN-GP
+![Screenshot](Wasserstein_GAN_GP/loss_curves.PNG)
 
 ### Research Paper References
 DCGAN: https://arxiv.org/pdf/1511.06434.pdf
