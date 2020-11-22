@@ -9,6 +9,7 @@ import torchvision
 from torch.utils.data import DataLoader
 from torchvision import models, datasets, transforms
 import torch.functional as F
+import time
 
 parser = argparse.ArgumentParser()
 
@@ -80,9 +81,9 @@ def weights_init(m):
         nn.init.constant_(m.bias.data, 0)
 
 def gradient_penalty(critic, real, fake, device = "cpu"):
-    BATCH_SIZE, C, H, W = real.shape
+    batch_size, C, H, W = real.shape
     # Creating interpolated images
-    epsilon = torch.randn([BATCH_SIZE, 1, 1, 1]).repeat(1,1,1,1).to(device)
+    epsilon = torch.randn([batch_size, 1, 1, 1]).repeat(1,C,H,W).to(device)
     interpolated_images = real*epsilon + fake * (1-epsilon)
 
     #calculate critic scores
@@ -93,7 +94,8 @@ def gradient_penalty(critic, real, fake, device = "cpu"):
     outputs = mixed_scores, 
     grad_outputs = torch.ones_like(mixed_scores),
     create_graph=True,
-    retain_graph=True)[0]
+    retain_graph=True
+    )[0]
 
     # Number of Dimension
     gradient = gradient.view(gradient.shape[0], -1)
@@ -158,6 +160,8 @@ fixed_noise = torch.randn((64, Z_DIM, 1, 1)).to(device)
 
 step = 0 # For printing to tens
 
+start_time = time.time()
+
 for epoch in range(NUM_EPOCHS):
     
     # Unsupervised
@@ -166,6 +170,7 @@ for epoch in range(NUM_EPOCHS):
         # The real world images
         real = real.to(device)
         
+        cur_batch_size = real.shape[0]
         #####################################################
         # Train the Critic
         #####################################################
@@ -173,7 +178,7 @@ for epoch in range(NUM_EPOCHS):
         for _ in range(CRITIC_ITERATIONS):
             critic.zero_grad()
             # Latent noise
-            noise = torch.randn((BATCH_SIZE, Z_DIM, 1, 1)).to(device)
+            noise = torch.randn((cur_batch_size, Z_DIM, 1, 1)).to(device)
             # Pass the latent vector through the generator
             fake = generator(noise)     
             critic_real = critic(real).view(-1)
@@ -220,3 +225,9 @@ for epoch in range(NUM_EPOCHS):
 #                 loss_curves.add_scalar("discriminator", loss_disc, global_step = step)
                 
             step += 1 # See progression of images
+
+total_time = time.time() - start_time
+
+# Save the state dictionaries after training
+torch.save(generator.state_dict(), 'generator.pt')
+torch.save(critic.state_dict(), 'critic.pt')
