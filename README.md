@@ -37,7 +37,7 @@ The dataset used to train the Generative adversarial networks was the celeba dat
 ![Screenshot](Wasserstein_GAN_GP/fake_images.PNG)
 
 ### Loss Curves for WGAN-GP
-![Screenshot](Wasserstein_GAN_GP/loss_curves.PNG)
+![Screenshot](Wasserstein_GAN_GP/loss_Curves.PNG)
 
 ### Research Paper References
 DCGAN: https://arxiv.org/pdf/1511.06434.pdf
