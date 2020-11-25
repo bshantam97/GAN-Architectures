@@ -40,10 +40,10 @@ The dataset used to train the Generative adversarial networks was the celeba dat
 ![Screenshot](Wasserstein_GAN_GP/loss_Curves.PNG)
 
 ### Fake Images generated using Conditional WGAN-GP after training for 20 Epochs
-![Screenshot](Conditional_GAN/loss_curves.PNG)
+![Screenshot](Conditional_GAN/fake_images.PNG)
 
 ### Loss Curves for Conditional WGAN-GP 
-![Screenshot](Conditional_GAN/fake_images.PNG)
+![Screenshot](Conditional_GAN/loss_curves.PNG)
 ### Research Paper References
 DCGAN: https://arxiv.org/pdf/1511.06434.pdf
 
