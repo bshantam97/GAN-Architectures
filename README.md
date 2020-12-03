@@ -16,6 +16,9 @@ Shantam Bajpai
 
 5. EBGAN (Energy Based Generative Adversarial Network)
 
+### To Do 
+Calculate the Inception Scores and Compute the Fretchet Inception Distance.
+
 ### Dataset Used
 The dataset used to train the Generative adversarial networks was the celeba dataset which is a large scale face attributes dataset with more than 200K Celebrity faces and the MNIST Dataset (For conditional Wasserstein GAN-GP). 
 
